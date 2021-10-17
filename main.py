@@ -1,5 +1,6 @@
 # main.py
 import ast
+import json
 import mysql.connector
 from typing import Optional
 
@@ -19,6 +20,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class Data(BaseModel):
+    uniqueId: str
+    search: str
 
 @app.get("/{search_string}")
 def get_search_results(search_string):
@@ -96,3 +100,25 @@ def get_search_results(search_string):
 
 	except:
 		return {"message": "ERROR"}
+
+@app.post("/")
+def post_search_profile(data: dict):
+
+	connection = mysql.connector.connect(host='localhost',
+                                         database='eletronics',
+                                         user='root',
+                                         password='pankeka123')
+
+	sql_insert_query = (
+		f"""
+		INSERT INTO search_profiles (unique_id, search) VALUES ('{data["uniqueId"]}', '{data["search"]}');
+		"""
+		)
+	cursor = connection.cursor()
+	cursor.execute(sql_insert_query)
+	connection.commit()
+
+	return {"message": data}
+			
+
+
