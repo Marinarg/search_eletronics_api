@@ -1,0 +1,12 @@
+[Unit]
+Description=Search eletronics API
+After=network.target api.service
+
+[Service]
+User=ubuntu
+Group=ubuntu
+Environment=PATH=/usr/bin:/usr/local/bin:/bin
+ExecStart=/bin/bash /usr/bin/launchscript.sh
+
+[Install]
+WantedBy=multi-user.target
