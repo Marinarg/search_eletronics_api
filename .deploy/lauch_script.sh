@@ -1,0 +1,1 @@
+cd /home/ubuntu/search_eletronics_api && /home/ubuntu/.local/bin/uvicorn main:app --reload
