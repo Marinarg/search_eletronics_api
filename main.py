@@ -69,10 +69,9 @@ def get_search_results(search_string):
 					FROM filipeflop_shipping
 					UNION ALL (SELECT * FROM baudaeletronica_shipping) 
 				)
-
 				SELECT *
 				FROM joined_result				
-				INNER JOIN union_shipping
+				LEFT JOIN union_shipping
 				ON joined_result.website_domain = union_shipping.website_domain
 				"""
 			)
@@ -91,7 +90,7 @@ def get_search_results(search_string):
 					"in_stock": records[product_id][5],
 					"product_url": records[product_id][6],
 					"execution_date": records[product_id][7],
-					"shipping_info": ast.literal_eval(records[product_id][8])
+					"shipping_info": ast.literal_eval(records[product_id][8]) if records[product_id][8] else None
 
 			} for product_id in range(len(records))}
 
