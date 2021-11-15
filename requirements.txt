@@ -1,0 +1,14 @@
+anyio==3.3.3
+certifi==2021.5.30
+contextlib2==21.6.0
+contextvars==2.4
+dataclasses==0.6
+fastapi==0.70.0
+idna==3.2
+immutables==0.16
+mysql-connector-python==8.0.26
+protobuf==3.18.1
+pydantic==1.8.2
+sniffio==1.2.0
+starlette==0.16.0
+typing-extensions==3.10.0.2

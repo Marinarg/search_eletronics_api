@@ -3,8 +3,8 @@ Description=Search eletronics API
 After=network.target api.service
 
 [Service]
-User=ubuntu
-Group=ubuntu
+User=admin
+Group=admin
 Environment=PATH=/usr/bin:/usr/local/bin:/bin
 ExecStart=/bin/bash /usr/bin/launchscript.sh
 
