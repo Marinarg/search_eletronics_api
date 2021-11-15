@@ -2,7 +2,7 @@ anyio==3.3.3
 certifi==2021.5.30
 contextlib2==21.6.0
 contextvars==2.4
-dataclasses==0.6
+dataclasses==0.7
 fastapi==0.70.0
 idna==3.2
 immutables==0.16
