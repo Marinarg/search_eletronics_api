@@ -6,7 +6,7 @@ After=network.target api.service
 User=admin
 Group=admin
 Environment=PATH=/usr/bin:/usr/local/bin:/bin
-ExecStart=/bin/bash /home/admin/search_eletronics_api/.deploy/launchscript.sh
+ExecStart=/bin/bash /home/admin/search_eletronics_api/.deploy/lauch_script.sh
 
 [Install]
 WantedBy=multi-user.target
