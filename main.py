@@ -26,7 +26,7 @@ class Data(BaseModel):
 
 @app.get("/{search_string}")
 def get_search_results(search_string):
-	search_string_formated = '%'.join(("%"+search_string.strip()+"%").split(" "))
+	search_string_formated = '%'.join(("%"+search_string.strip()+"%").split(" ")).lower().replace(",", ".")
 
 	try:
 		connection = mysql.connector.connect(host='localhost',
@@ -110,7 +110,7 @@ def post_search_profile(data: dict):
 
 	sql_insert_query = (
 		f"""
-		INSERT INTO search_profiles (unique_id, search) VALUES ('{data["uniqueId"]}', '{data["search"]}');
+		INSERT INTO search_profiles (unique_id, search) VALUES ('{data["uniqueId"]}', '{data["search"].lower().replace(",", ".")}');
 		"""
 		)
 	cursor = connection.cursor()
