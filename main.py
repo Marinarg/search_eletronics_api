@@ -41,10 +41,10 @@ def get_search_results(search_string):
 					SELECT product_name, website_domain, product_image, product_price, currency_symbol, in_stock, product_url, execution_date
 					FROM crawlers_results cr
 					WHERE product_name like '{search_string_formated}'
-					AND product_name IS NOT NULL
-					AND product_price IS NOT NULL
-					AND in_stock IS NOT NULL
-					AND product_url IS NOT NULL
+					AND product_name IS NOT NULL AND product_name != ''
+					AND product_price IS NOT NULL AND product_price != ''
+					AND in_stock IS NOT NULL AND in_stock != ''
+					AND product_url IS NOT NULL AND product_url != ''
 				), groupedcr AS (
 					SELECT product_name, website_domain, max(execution_date) as max_execution_date
 					FROM crawlers_results
