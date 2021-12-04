@@ -26,6 +26,14 @@ class Data(BaseModel):
 
 @app.get("/{search_string}")
 def get_search_results(search_string):
+
+	# Search filters
+	if len(search_string) <= 1:
+		return None
+	if search_string.isdigit():
+		return None
+
+
 	search_string_formated = '%'.join(("%"+search_string.strip()+"%").split(" ")).lower().replace(",", ".")
 
 	try:
