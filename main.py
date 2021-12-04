@@ -77,6 +77,7 @@ def get_search_results(search_string):
 				FROM joined_result				
 				LEFT JOIN union_shipping
 				ON joined_result.website_domain = union_shipping.website_domain
+				ORDER BY joined_result.in_stock DESC
 				"""
 			)
 
