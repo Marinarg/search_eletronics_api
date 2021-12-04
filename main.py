@@ -2,6 +2,7 @@
 import ast
 import json
 import mysql.connector
+import re
 from typing import Optional
 
 from fastapi import FastAPI
@@ -98,7 +99,7 @@ def get_search_results(search_string):
 					"product_name": records[product_id][0],
 					"website_domain": records[product_id][1],
 					"product_image": records[product_id][2],
-					"product_price": records[product_id][3],
+					"product_price": re.findall(r"\d+\.*\,*\d*\.*\,*\d*", records[product_id][3])[0],
 					"currency_symbol": records[product_id][4],
 					"in_stock": records[product_id][5],
 					"product_url": records[product_id][6],
