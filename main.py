@@ -133,7 +133,7 @@ def post_search_profile(data: dict):
 
 	return {"message": data}
 
-@app.get("/{search_string}/recomendation")
+@app.get("/{search_string}/recommendations")
 def get_search_results(search_string):
 
 	# Search filters
