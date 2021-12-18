@@ -132,6 +132,58 @@ def post_search_profile(data: dict):
 	connection.commit()
 
 	return {"message": data}
-			
+
+@app.get("/{search_string}/recomendation")
+def get_search_results(search_string):
+
+	# Search filters
+	if len(search_string) <= 1:
+		return None
+	if search_string.isdigit():
+		return None
+
+
+	search_string_formated  = search_string.strip().lower().replace(",", ".")
+
+	try:
+		connection = mysql.connector.connect(host='localhost',
+	                                         database='eletronics',
+	                                         user='root',
+	                                         password='pankeka123')
+
+		if connection.is_connected():
+			sql_select_query = (
+				f"""
+				WITH id AS (
+					SELECT DISTINCT unique_id, search 
+					FROM search_profiles 
+					WHERE search = '{search_string_formated}'
+				), search AS (
+					SELECT s.search 
+					FROM search_profiles s 
+					INNER JOIN id 
+					USING(unique_id)
+					WHERE s.search != '{search_string_formated}'
+				)
+
+				SELECT search, count('*') as qtt 
+				FROM search 
+				GROUP BY search 
+				ORDER BY qtt DESC 
+				LIMIT 5;
+				"""
+			)
+
+			cursor = connection.cursor()
+			cursor.execute(sql_select_query)
+			records = cursor.fetchall()
+
+			return [item[0] for item in records]
+
+		else:
+			return {"error": "ERROR IN DABASE CONNECTION!"}
+
+	except:
+		return {"message": "ERROR"}
 
 
