@@ -134,7 +134,7 @@ def post_search_profile(data: dict):
 	return {"message": data}
 
 @app.get("/{search_string}/recommendations")
-def get_search_results(search_string):
+def get_recommendations_results(search_string):
 
 	# Search filters
 	if len(search_string) <= 1:
