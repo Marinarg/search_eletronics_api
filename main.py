@@ -2,9 +2,10 @@
 import ast
 import json
 import mysql.connector
+import pickle
 import re
-from typing import Optional
 
+from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
@@ -178,7 +179,21 @@ def get_recommendations_results(search_string):
 			cursor.execute(sql_select_query)
 			records = cursor.fetchall()
 
-			return [item[0] for item in records]
+			if records and len(records) == 5:
+				return [item[0] for item in records]
+
+			# Vectorize search string
+			search_string_vectorized = vectorizer.transform([search_string_formated])
+
+			# Load model from disk
+			model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
+			
+			# Get recommendation
+			prediction = model.predict(search_string_vectorized)
+			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
+			terms = vectorizer.get_feature_names()
+
+			return [terms[ind] for ind in order_centroids[prediction[0], :5]]
 
 		else:
 			return {"error": "ERROR IN DABASE CONNECTION!"}
