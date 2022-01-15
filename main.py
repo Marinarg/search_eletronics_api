@@ -198,10 +198,10 @@ def get_recommendations_results(search_string):
 			records = cursor.fetchall()
 			product_descriptions = [item[0] for item in records]
 
-			# # Vectorize search string
-			# tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
-			# vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
-			# search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
+			# Vectorize search string
+			tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
+			vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
+			search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
 
 			# # Load model from disk
 			# model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
