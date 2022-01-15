@@ -153,34 +153,34 @@ def get_recommendations_results(search_string):
 	                                         password='pankeka123')
 
 		if connection.is_connected():
-			sql_select_query = (
-				f"""
-				WITH id AS (
-					SELECT DISTINCT unique_id, search 
-					FROM search_profiles 
-					WHERE search = '{search_string_formated}'
-				), search AS (
-					SELECT s.search 
-					FROM search_profiles s 
-					INNER JOIN id 
-					USING(unique_id)
-					WHERE s.search != '{search_string_formated}'
-				)
+			# sql_select_query = (
+			# 	f"""
+			# 	WITH id AS (
+			# 		SELECT DISTINCT unique_id, search 
+			# 		FROM search_profiles 
+			# 		WHERE search = '{search_string_formated}'
+			# 	), search AS (
+			# 		SELECT s.search 
+			# 		FROM search_profiles s 
+			# 		INNER JOIN id 
+			# 		USING(unique_id)
+			# 		WHERE s.search != '{search_string_formated}'
+			# 	)
 
-				SELECT search, count('*') as qtt 
-				FROM search 
-				GROUP BY search 
-				ORDER BY qtt DESC 
-				LIMIT 5;
-				"""
-			)
+			# 	SELECT search, count('*') as qtt 
+			# 	FROM search 
+			# 	GROUP BY search 
+			# 	ORDER BY qtt DESC 
+			# 	LIMIT 5;
+			# 	"""
+			# )
 
-			cursor = connection.cursor()
-			cursor.execute(sql_select_query)
-			records = cursor.fetchall()
+			# cursor = connection.cursor()
+			# cursor.execute(sql_select_query)
+			# records = cursor.fetchall()
 
-			if records and len(records) == 5:
-				return [item[0] for item in records]
+			# if records and len(records) == 5:
+			# 	return [item[0] for item in records]
 
 			# Get stop words from file
 			stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
