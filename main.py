@@ -198,20 +198,21 @@ def get_recommendations_results(search_string):
 			records = cursor.fetchall()
 			product_descriptions = [item[0] for item in records]
 
-			# Vectorize search string
-			tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
-			vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
-			search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
+			# # Vectorize search string
+			# tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
+			# vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
+			# search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
 
-			# Load model from disk
-			model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
+			# # Load model from disk
+			# model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
 			
-			# Get recommendation
-			prediction = model.predict(search_string_vectorized)
-			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
-			terms = tfid_vectorizer.get_feature_names()
+			# # Get recommendation
+			# prediction = model.predict(search_string_vectorized)
+			# order_centroids = model.cluster_centers_.argsort()[:, ::-1]
+			# terms = tfid_vectorizer.get_feature_names()
 
-			return [terms[ind] for ind in order_centroids[prediction[0], :5]]
+			# return [terms[ind] for ind in order_centroids[prediction[0], :5]]
+			return ['1', '1', '1', '1', '1']
 
 		else:
 			return {"error": "ERROR IN DABASE CONNECTION!"}
