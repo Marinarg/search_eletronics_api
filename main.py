@@ -182,8 +182,26 @@ def get_recommendations_results(search_string):
 			if records and len(records) == 5:
 				return [item[0] for item in records]
 
+			# Get stop words from file
+			stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
+
+			# Get product descriptions and vectorize it (considering stop words)
+			sql_get_descriptions_query = (
+			    """
+			    SELECT DISTINCT product_description 
+			    FROM crawlers_results;
+			    """
+			)
+
+			cursor = connection.cursor()
+			cursor.execute(sql_get_descriptions_query)
+			records = cursor.fetchall()
+			product_descriptions = [item[0] for item in records]
+
 			# Vectorize search string
-			search_string_vectorized = vectorizer.transform([search_string_formated])
+			tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
+			vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
+			search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
 
 			# Load model from disk
 			model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
@@ -191,7 +209,7 @@ def get_recommendations_results(search_string):
 			# Get recommendation
 			prediction = model.predict(search_string_vectorized)
 			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
-			terms = vectorizer.get_feature_names()
+			terms = tfid_vectorizer.get_feature_names()
 
 			return [terms[ind] for ind in order_centroids[prediction[0], :5]]
 
