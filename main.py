@@ -179,7 +179,13 @@ def get_recommendations_results(search_string):
 			cursor = connection.cursor()
 			cursor.execute(sql_select_query)
 			records = cursor.fetchall()
-			recommendations_through_user_profiles = [item[0] for item in records if item[0] and item[0]!= search_string_formated]
+			recommendations_through_user_profiles = [
+				item[0] for item in records 
+				if item[0] 
+				and item[0]!= search_string_formated
+				and not terms[ind].isdigit() 
+				and len(terms[ind])> 2 
+			]
 
 			if len(recommendations_through_user_profiles) == 5:
 				return recommendations_through_user_profiles
