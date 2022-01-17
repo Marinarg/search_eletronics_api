@@ -154,66 +154,66 @@ def get_recommendations_results(search_string):
 	                                         password='pankeka123')
 
 		if connection.is_connected():
-			# sql_select_query = (
-			# 	f"""
-			# 	WITH id AS (
-			# 		SELECT DISTINCT unique_id, search 
-			# 		FROM search_profiles 
-			# 		WHERE search = '{search_string_formated}'
-			# 	), search AS (
-			# 		SELECT s.search 
-			# 		FROM search_profiles s 
-			# 		INNER JOIN id 
-			# 		USING(unique_id)
-			# 		WHERE s.search != '{search_string_formated}'
-			# 	)
+			sql_select_query = (
+				f"""
+				WITH id AS (
+					SELECT DISTINCT unique_id, search 
+					FROM search_profiles 
+					WHERE search = '{search_string_formated}'
+				), search AS (
+					SELECT s.search 
+					FROM search_profiles s 
+					INNER JOIN id 
+					USING(unique_id)
+					WHERE s.search != '{search_string_formated}'
+				)
 
-			# 	SELECT search, count('*') as qtt 
-			# 	FROM search 
-			# 	GROUP BY search 
-			# 	ORDER BY qtt DESC 
-			# 	LIMIT 5;
-			# 	"""
-			# )
-
-			# cursor = connection.cursor()
-			# cursor.execute(sql_select_query)
-			# records = cursor.fetchall()
-
-			# if records and len(records) == 5:
-			# 	return [item[0] for item in records]
-
-			# Get stop words from file
-			stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
-
-			# Get product descriptions and vectorize it (considering stop words)
-			sql_get_descriptions_query = (
-			    """
-			    SELECT DISTINCT product_description 
-			    FROM crawlers_results;
-			    """
+				SELECT search, count('*') as qtt 
+				FROM search 
+				GROUP BY search 
+				ORDER BY qtt DESC 
+				LIMIT 5;
+				"""
 			)
 
 			cursor = connection.cursor()
-			cursor.execute(sql_get_descriptions_query)
+			cursor.execute(sql_select_query)
 			records = cursor.fetchall()
-			product_descriptions = [item[0] for item in records]
 
-			# Vectorize search string
-			tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
-			vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
+			# if records and len(records) == 5:
+			return [item[0] for item in records]
 
-			search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
+			# # Get stop words from file
+			# stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
 
-			# Load model from disk
-			model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
+			# # Get product descriptions and vectorize it (considering stop words)
+			# sql_get_descriptions_query = (
+			#     """
+			#     SELECT DISTINCT product_description 
+			#     FROM crawlers_results;
+			#     """
+			# )
+
+			# cursor = connection.cursor()
+			# cursor.execute(sql_get_descriptions_query)
+			# records = cursor.fetchall()
+			# product_descriptions = [item[0] for item in records]
+
+			# # Vectorize search string
+			# tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
+			# vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
+
+			# search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
+
+			# # Load model from disk
+			# model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
 			
-			# Get recommendation
-			prediction = model.predict(search_string_vectorized)
-			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
-			terms = tfid_vectorizer.get_feature_names()
+			# # Get recommendation
+			# prediction = model.predict(search_string_vectorized)
+			# order_centroids = model.cluster_centers_.argsort()[:, ::-1]
+			# terms = tfid_vectorizer.get_feature_names()
 
-			return [terms[ind] for ind in order_centroids[prediction[0], :5]]
+			# return [terms[ind] for ind in order_centroids[prediction[0]] if not terms[ind].isdigit() and len(terms[ind])> 2 and terms[ind]!=search_string_formated][:5]
 
 		else:
 			return {"error": "ERROR IN DABASE CONNECTION!"}
