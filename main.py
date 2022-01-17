@@ -215,7 +215,7 @@ def get_recommendations_results(search_string):
 			terms = tfid_vectorizer.get_feature_names()
 
 			return (
-				final_recommendations = recommendations_through_user_profiles
+				recommendations_through_user_profiles
 				+ [terms[ind] for ind in order_centroids[prediction[0]] 
 					if not terms[ind].isdigit() 
 					and len(terms[ind])> 2 
