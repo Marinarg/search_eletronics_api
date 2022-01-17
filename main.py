@@ -183,8 +183,8 @@ def get_recommendations_results(search_string):
 				item[0] for item in records 
 				if item[0] 
 				and item[0]!= search_string_formated
-				and not terms[ind].isdigit() 
-				and len(terms[ind])> 2 
+				and not item[0].isdigit() 
+				and len(item[0])> 2 
 			]
 
 			if len(recommendations_through_user_profiles) == 5:
