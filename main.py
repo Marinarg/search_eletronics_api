@@ -240,5 +240,4 @@ def get_recommendations_results(search_string):
 	except:
 		return {"message": "ERROR"}
 
-search_code = [(idx, value) for idx, value in enumerate(terms) if value == 'led'][0][0]
 
