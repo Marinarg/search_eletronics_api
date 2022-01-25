@@ -179,9 +179,11 @@ def get_recommendations_results(search_string):
 				WHERE qtt > 2;
 				"""
 			)
+
 			cursor = connection.cursor()
 			cursor.execute(sql_select_query)
 			records = cursor.fetchall()
+			
 			recommendations_through_user_profiles = [
 				item[0] for item in records 
 				if item[0] 
@@ -191,10 +193,10 @@ def get_recommendations_results(search_string):
 				and len(item[0])> 2 
 			]
 
-						if len(recommendations_through_user_profiles) == 5:
-							return recommendations_through_user_profiles
+			if len(recommendations_through_user_profiles) == 5:
+				return recommendations_through_user_profiles
 
-						# Get stop words from file
+			# Get stop words from file
 			stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
 
 			# Get product descriptions and vectorize it (considering stop words)
