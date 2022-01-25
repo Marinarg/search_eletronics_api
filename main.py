@@ -166,16 +166,19 @@ def get_recommendations_results(search_string):
 					INNER JOIN id 
 					USING(unique_id)
 					WHERE s.search != '{search_string_formated}'
+				), all_results AS (
+					SELECT search, count('*') qtt 
+					FROM search 
+					GROUP BY search
+					ORDER BY qtt DESC
+					LIMIT 5
 				)
 
-				SELECT search, count('*') as qtt 
-				FROM search 
-				GROUP BY search 
-				ORDER BY qtt DESC 
-				LIMIT 5;
+				SELECT *
+				FROM all_results
+				WHERE qtt > 2;
 				"""
 			)
-
 			cursor = connection.cursor()
 			cursor.execute(sql_select_query)
 			records = cursor.fetchall()
@@ -183,14 +186,15 @@ def get_recommendations_results(search_string):
 				item[0] for item in records 
 				if item[0] 
 				and item[0]!= search_string_formated
+				and item[0] not in search_string_formated
 				and not item[0].isdigit() 
 				and len(item[0])> 2 
 			]
 
-			if len(recommendations_through_user_profiles) == 5:
-				return recommendations_through_user_profiles
+						if len(recommendations_through_user_profiles) == 5:
+							return recommendations_through_user_profiles
 
-			# Get stop words from file
+						# Get stop words from file
 			stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
 
 			# Get product descriptions and vectorize it (considering stop words)
@@ -209,12 +213,11 @@ def get_recommendations_results(search_string):
 			# Vectorize search string
 			tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
 			vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
-
 			search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
 
 			# Load model from disk
 			model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
-			
+
 			# Get recommendation
 			prediction = model.predict(search_string_vectorized)
 			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
@@ -222,12 +225,13 @@ def get_recommendations_results(search_string):
 
 			return (
 				recommendations_through_user_profiles
-				+ [terms[ind] for ind in order_centroids[prediction[0]] 
-					if not terms[ind].isdigit() 
-					and len(terms[ind])> 2 
+				+ [terms[ind] for ind in order_centroids[prediction[0]]
+					if not terms[ind].isdigit()
+					and len(terms[ind])> 2
 					and terms[ind]!=search_string_formated
+					and terms[ind] not in stop_words
 					and terms[ind] not in recommendations_through_user_profiles
-				][:(5-len(recommendations_through_user_profiles))]
+				][:1]
 			)
 
 		else:
@@ -236,4 +240,5 @@ def get_recommendations_results(search_string):
 	except:
 		return {"message": "ERROR"}
 
+search_code = [(idx, value) for idx, value in enumerate(terms) if value == 'led'][0][0]
 
