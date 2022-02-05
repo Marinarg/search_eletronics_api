@@ -193,7 +193,7 @@ def get_recommendations_results(search_string):
 				and len(item[0])> 2 
 			]
 
-			return {"profile": records}
+			return {"profile": search_string_formated}
 
 			# if recommendations_through_user_profiles:
 			# 	return recommendations_through_user_profiles
