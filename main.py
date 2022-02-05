@@ -183,7 +183,7 @@ def get_recommendations_results(search_string):
 			cursor = connection.cursor()
 			cursor.execute(sql_select_query)
 			records = cursor.fetchall()
-			
+
 			recommendations_through_user_profiles = [
 				item[0] for item in records 
 				if item[0] 
@@ -193,8 +193,8 @@ def get_recommendations_results(search_string):
 				and len(item[0])> 2 
 			]
 
-			if recommendations_through_user_profiles:
-				return recommendations_through_user_profiles
+			# if recommendations_through_user_profiles:
+			# 	return recommendations_through_user_profiles
 
 			# Get stop words from file
 			stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
@@ -225,16 +225,26 @@ def get_recommendations_results(search_string):
 			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
 			terms = tfid_vectorizer.get_feature_names()
 
-			return (
-				recommendations_through_user_profiles
-				+ [terms[ind] for ind in order_centroids[prediction[0]]
+			# return (
+			# 	recommendations_through_user_profiles
+			# 	+ [terms[ind] for ind in order_centroids[prediction[0]]
+			# 		if not terms[ind].isdigit()
+			# 		and len(terms[ind])> 2
+			# 		and terms[ind]!=search_string_formated
+			# 		and terms[ind] not in stop_words
+			# 		and terms[ind] not in recommendations_through_user_profiles
+			# 	][:1]
+			# )
+
+			model_bla = [terms[ind] for ind in order_centroids[prediction[0]]
 					if not terms[ind].isdigit()
 					and len(terms[ind])> 2
 					and terms[ind]!=search_string_formated
 					and terms[ind] not in stop_words
 					and terms[ind] not in recommendations_through_user_profiles
 				][:1]
-			)
+
+			return [{"profile": recommendations_through_user_profiles, "model": model_bla}]
 
 		else:
 			return {"error": "ERROR IN DABASE CONNECTION!"}
