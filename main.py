@@ -193,7 +193,7 @@ def get_recommendations_results(search_string):
 				and len(item[0])> 2 
 			]
 
-			if len(recommendations_through_user_profiles) == 5:
+			if recommendations_through_user_profiles:
 				return recommendations_through_user_profiles
 
 			# Get stop words from file
