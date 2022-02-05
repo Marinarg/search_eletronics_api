@@ -193,50 +193,48 @@ def get_recommendations_results(search_string):
 				and len(item[0])> 2 
 			]
 
-			return {"profile": search_string_formated}
+			if recommendations_through_user_profiles:
+				return recommendations_through_user_profiles
 
-			# if recommendations_through_user_profiles:
-			# 	return recommendations_through_user_profiles
+			# Get stop words from file
+			stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
 
-			# # Get stop words from file
-			# stop_words = json.load(open("/home/admin/stop_words.json"))['stop_words']
+			# Get product descriptions and vectorize it (considering stop words)
+			sql_get_descriptions_query = (
+			    """
+			    SELECT DISTINCT product_description 
+			    FROM crawlers_results;
+			    """
+			)
 
-			# # Get product descriptions and vectorize it (considering stop words)
-			# sql_get_descriptions_query = (
-			#     """
-			#     SELECT DISTINCT product_description 
-			#     FROM crawlers_results;
-			#     """
-			# )
+			cursor = connection.cursor()
+			cursor.execute(sql_get_descriptions_query)
+			records = cursor.fetchall()
+			product_descriptions = [item[0] for item in records]
 
-			# cursor = connection.cursor()
-			# cursor.execute(sql_get_descriptions_query)
-			# records = cursor.fetchall()
-			# product_descriptions = [item[0] for item in records]
+			# Vectorize search string
+			tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
+			vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
+			search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
 
-			# # Vectorize search string
-			# tfid_vectorizer = TfidfVectorizer(stop_words=stop_words)
-			# vectorized_descriptions = tfid_vectorizer.fit_transform(product_descriptions)
-			# search_string_vectorized = tfid_vectorizer.transform([search_string_formated])
+			# Load model from disk
+			model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
 
-			# # Load model from disk
-			# model = pickle.load(open('/home/admin/kmeans_model.sav', 'rb'))
+			# Get recommendation
+			prediction = model.predict(search_string_vectorized)
+			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
+			terms = tfid_vectorizer.get_feature_names()
 
-			# # Get recommendation
-			# prediction = model.predict(search_string_vectorized)
-			# order_centroids = model.cluster_centers_.argsort()[:, ::-1]
-			# terms = tfid_vectorizer.get_feature_names()
-
-			# return (
-			# 	recommendations_through_user_profiles
-			# 	+ [terms[ind] for ind in order_centroids[prediction[0]]
-			# 		if not terms[ind].isdigit()
-			# 		and len(terms[ind])> 2
-			# 		and terms[ind]!=search_string_formated
-			# 		and terms[ind] not in stop_words
-			# 		and terms[ind] not in recommendations_through_user_profiles
-			# 	][:1]
-			# )
+			return (
+				recommendations_through_user_profiles
+				+ [terms[ind] for ind in order_centroids[prediction[0]]
+					if not terms[ind].isdigit()
+					and len(terms[ind])> 2
+					and terms[ind]!=search_string_formated
+					and terms[ind] not in stop_words
+					and terms[ind] not in recommendations_through_user_profiles
+				][:1]
+			)
 
 
 		else:
