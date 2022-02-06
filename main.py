@@ -157,23 +157,26 @@ def get_recommendations_results(search_string):
 			sql_select_query = (
 				f"""
 				WITH id AS (
-					SELECT DISTINCT unique_id, search 
+					SELECT DISTINCT unique_id, search, CAST(execution_date AS date) as id_execution_date
 					FROM search_profiles 
 					WHERE search = '{search_string_formated}'
 				), search AS (
-					SELECT s.search 
-					FROM search_profiles s 
+					SELECT search, unique_id, CAST(execution_date AS date) as s_execution_date
+					FROM search_profiles
+				), join_result AS (
+					SELECT s.search, s.s_execution_date
+					FROM search s
 					INNER JOIN id 
-					USING(unique_id)
+					ON s.unique_id = id.unique_id
+					AND s.s_execution_date = id.id_execution_date
 					WHERE s.search != '{search_string_formated}'
 				), all_results AS (
 					SELECT search, count('*') qtt 
-					FROM search 
+					FROM join_result 
 					GROUP BY search
 					ORDER BY qtt DESC
 					LIMIT 5
 				)
-
 				SELECT *
 				FROM all_results
 				WHERE qtt > 2;
