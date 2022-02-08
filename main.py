@@ -157,11 +157,11 @@ def get_recommendations_results(search_string):
 			sql_select_query = (
 				f"""
 				WITH id AS (
-					SELECT DISTINCT unique_id, search, CAST(execution_date AS date) as id_execution_date
+					SELECT DISTINCT unique_id, search, DATE_FORMAT(execution_date, '%Y-%m-%d %H:00:00') as id_execution_date
 					FROM search_profiles 
 					WHERE search = '{search_string_formated}'
 				), search AS (
-					SELECT search, unique_id, CAST(execution_date AS date) as s_execution_date
+					SELECT search, unique_id, DATE_FORMAT(execution_date, '%Y-%m-%d %H:00:00') as s_execution_date
 					FROM search_profiles
 				), join_result AS (
 					SELECT s.search, s.s_execution_date
