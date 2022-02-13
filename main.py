@@ -233,9 +233,10 @@ def get_recommendations_results(search_string):
 				+ [terms[ind] for ind in order_centroids[prediction[0]]
 					if not terms[ind].isdigit()
 					and len(terms[ind])> 2
-					and terms[ind]!=search_string_formated
+					and terms[ind]!= search_string_formated
 					and terms[ind] not in stop_words
 					and terms[ind] not in recommendations_through_user_profiles
+					and terms[ind] not in search_string_formated
 				][:1]
 			)
 
