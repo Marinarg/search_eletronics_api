@@ -40,10 +40,10 @@ def get_search_results(search_string):
 	search_string_formated = '%'.join(("%"+search_string.strip()+"%").split(" ")).lower().replace(",", ".")
 
 	try:
-		connection = mysql.connector.connect(host='localhost',
+		connection = mysql.connector.connect(host={host},
 	                                         database='eletronics',
-	                                         user='root',
-	                                         password='pankeka123')
+	                                         user={user},
+	                                         password={password})
 
 		if connection.is_connected():
 			sql_select_query = (
@@ -119,10 +119,10 @@ def get_search_results(search_string):
 @app.post("/")
 def post_search_profile(data: dict):
 
-	connection = mysql.connector.connect(host='localhost',
+	connection = mysql.connector.connect(host={host},
                                          database='eletronics',
-                                         user='root',
-                                         password='pankeka123')
+                                         user={user},
+                                         password={password})
 
 	sql_insert_query = (
 		f"""
@@ -228,17 +228,15 @@ def get_recommendations_results(search_string):
 			order_centroids = model.cluster_centers_.argsort()[:, ::-1]
 			terms = tfid_vectorizer.get_feature_names()
 
-			return (
-				recommendations_through_user_profiles
-				+ [terms[ind] for ind in order_centroids[prediction[0]]
-					if not terms[ind].isdigit()
-					and len(terms[ind])> 2
-					and terms[ind]!= search_string_formated
-					and terms[ind] not in stop_words
-					and terms[ind] not in recommendations_through_user_profiles
-					and terms[ind] not in search_string_formated
-				][:1]
-			)
+			return [
+				terms[ind] for ind in order_centroids[prediction[0]]
+				if not terms[ind].isdigit()
+				and len(terms[ind])> 2
+				and terms[ind]!= search_string_formated
+				and terms[ind] not in stop_words
+				and terms[ind] not in recommendations_through_user_profiles
+				and terms[ind] not in search_string_formated
+			][:1]
 
 
 		else:
