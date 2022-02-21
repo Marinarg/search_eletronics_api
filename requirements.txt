@@ -9,6 +9,7 @@ immutables==0.16
 mysql-connector-python==8.0.26
 protobuf==3.18.1
 pydantic==1.8.2
+scikit-learn==0.24.2
 sniffio==1.2.0
 starlette==0.16.0
 typing-extensions==3.10.0.2
