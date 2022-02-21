@@ -23,7 +23,7 @@ This project currently uses:
 - `conda activate search_eletronics_api`
 - `pip install -r requirements.txt`
 
-## Using API
+## Using the API
 
 In order to make a request to this API, you can use Python requests library as follows:
 
